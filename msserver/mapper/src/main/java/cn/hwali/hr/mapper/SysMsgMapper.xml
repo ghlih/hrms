@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.hwali.hr.mapper.SysMsgMapper" >
+  <resultMap id="BaseResultMap" type="cn.hwali.hr.model.SysMsg" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="mid" property="mid" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="hrid" property="hrid" jdbcType="INTEGER" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <association property="msgContent"  javaType="cn.hwali.hr.model.MsgContent">
+      <id column="mcid" property="id" jdbcType="BIGINT"/>
+      <result column="title" property="title" jdbcType="VARCHAR"/>
+      <result column="message" property="message" jdbcType="VARCHAR"/>
+      <result column="createDate" property="createDate" jdbcType="TIMESTAMP"/>
+    </association>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, mid, type, hrid, state
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from sysmsg
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="getSysMsg" resultMap="BaseResultMap">
+    select sm.*,mc.`message`,mc.`title`,mc.`createDate`,mc.`id` as mcid from sysmsg sm,msgcontent mc where sm.`mid`=mc.`id` and sm.`hrid`=#{hrid} order by mc.`createDate` desc limit #{start},#{size}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sysmsg
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cn.hwali.hr.model.SysMsg" >
+    insert into sysmsg (id, mid, type, 
+      hrid, state)
+    values (#{id,jdbcType=INTEGER}, #{mid,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, 
+      #{hrid,jdbcType=INTEGER}, #{state,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.hwali.hr.model.SysMsg" >
+    insert into sysmsg
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="mid != null" >
+        mid,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="hrid != null" >
+        hrid,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="mid != null" >
+        #{mid,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="hrid != null" >
+        #{hrid,jdbcType=INTEGER},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+    <insert id="sendMsg" useGeneratedKeys="true" parameterType="cn.hwali.hr.model.MsgContent" keyProperty="id">
+      insert into msgcontent(message,title) values(#{message},#{title})
+    </insert>
+  <insert id="addMsg2AllHrs">
+    insert into sysmsg(mid,hrid) values
+    <foreach collection="hrs" item="hr" separator=",">
+      (#{mid},#{hr.id})
+    </foreach>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.hwali.hr.model.SysMsg" >
+    update sysmsg
+    <set >
+      <if test="mid != null" >
+        mid = #{mid,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="hrid != null" >
+        hrid = #{hrid,jdbcType=INTEGER},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.hwali.hr.model.SysMsg" >
+    update sysmsg
+    set mid = #{mid,jdbcType=INTEGER},
+      type = #{type,jdbcType=INTEGER},
+      hrid = #{hrid,jdbcType=INTEGER},
+      state = #{state,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="markRead">
+    UPDATE sysmsg set state=1 WHERE hrid=#{hrid}
+    <if test="flag!=-1">
+      AND mid=#{flag}
+    </if>
+  </update>
+</mapper>

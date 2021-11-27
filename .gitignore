@@ -1,0 +1,5 @@
+# Project exclude paths
+/msserver/mapper/target/
+/msserver/model/target/
+/msserver/service/target/
+/msserver/web/target/

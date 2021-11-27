@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.hwali.hr.mapper.MailSendLogMapper">
+    <resultMap id="BaseResultMap" type="cn.hwali.hr.model.MailSendLog">
+        <result column="msgId" property="msgId" jdbcType="VARCHAR"/>
+        <result column="empId" property="empId" jdbcType="INTEGER"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="routeKey" property="routeKey" jdbcType="VARCHAR"/>
+        <result column="exchange" property="exchange" jdbcType="VARCHAR"/>
+        <result column="count" property="count" jdbcType="INTEGER"/>
+        <result column="tryTime" property="tryTime" jdbcType="TIMESTAMP"/>
+        <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <insert id="insert" parameterType="cn.hwali.hr.model.MailSendLog">
+        insert into mail_send_log (msgId, empId, status,
+                                   routeKey, exchange, count,
+                                   tryTime, createTime, updateTime)
+        values (#{msgId,jdbcType=VARCHAR}, #{empId,jdbcType=INTEGER}, #{status,jdbcType=INTEGER},
+                #{routeKey,jdbcType=VARCHAR}, #{exchange,jdbcType=VARCHAR}, #{count,jdbcType=INTEGER},
+                #{tryTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+    </insert>
+    <insert id="insertSelective" parameterType="cn.hwali.hr.model.MailSendLog">
+        insert into mail_send_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="msgId != null">
+                msgId,
+            </if>
+            <if test="empId != null">
+                empId,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="routeKey != null">
+                routeKey,
+            </if>
+            <if test="exchange != null">
+                exchange,
+            </if>
+            <if test="count != null">
+                count,
+            </if>
+            <if test="tryTime != null">
+                tryTime,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="updateTime != null">
+                updateTime,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="msgId != null">
+                #{msgId,jdbcType=VARCHAR},
+            </if>
+            <if test="empId != null">
+                #{empId,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="routeKey != null">
+                #{routeKey,jdbcType=VARCHAR},
+            </if>
+            <if test="exchange != null">
+                #{exchange,jdbcType=VARCHAR},
+            </if>
+            <if test="count != null">
+                #{count,jdbcType=INTEGER},
+            </if>
+            <if test="tryTime != null">
+                #{tryTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateMailSendLogStatus">
+        update mail_send_log
+        set status = #{status}
+        where msgId = #{msgId}
+    </update>
+    <update id="updateCount">
+        update mail_send_log
+        set count=count + 1,
+            updateTime=#{date}
+        where msgId = #{msgId};
+    </update>
+    <select id="getMailSendLogsByStatus" resultType="cn.hwali.hr.model.MailSendLog">
+        select *
+        from mail_send_log
+        where status = 0
+          and tryTime &lt; sysdate();
+    </select>
+</mapper>

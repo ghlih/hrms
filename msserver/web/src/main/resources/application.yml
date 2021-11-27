@@ -1,0 +1,46 @@
+server:
+  port: 8081
+
+spring:
+  datasource:
+    username: hwali
+    password: hwali
+    type: com.alibaba.druid.pool.DruidDataSource
+    #mysql8需要加上时区
+    url: jdbc:mysql://localhost:3306/vhr?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    druid:
+      remove-abandoned: true
+      remove-abandoned-timeout: 1800
+  rabbitmq:
+    username: hwali
+    password: hwali
+    host: localhost
+    port: 5672
+    # 开启 confirms 回调
+    # 开启 returnedMessage 回调
+    publisher-returns: true
+    publisher-confirm-type: correlated
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 100MB
+
+
+logging:
+  level:
+    cn.hwali.hr.mapper: debug
+
+aliyun:
+  oss:
+    access-key-id: LTAI4GK4qrb1vNRdyD6hzLnE
+    access-key-secret: Kf4JeiwVsIErzO9kAxH9OAM0wDXwJZ
+    bucket-domain: http://hual.oss-cn-shanghai.aliyuncs.com
+    bucket-name: hual
+    end-point: http://oss-cn-shanghai.aliyuncs.com
+
+save:
+  path: D:\dump\
